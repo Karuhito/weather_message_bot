@@ -26,4 +26,5 @@ jobs:
                 WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
                 WEATHER_CITY: ${{ secrets.WEATHER_CITY }}
                 SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+                DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
               run: python weather.py

@@ -6,6 +6,7 @@ WEATHER_API_KEY = os.environ.get("WEATHER_API_KEY")
 WEATHER_CITY = os.environ.get("WEATHER_CITY","Ishioka,JP")
 
 SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN")
+DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL")
 SLACK_CHANNEL = ("#お天気情報")
 
 if not WEATHER_API_KEY:
@@ -15,6 +16,11 @@ if not WEATHER_API_KEY:
 if not SLACK_BOT_TOKEN:
     print("SLACK_BOT_TOKENが設定されていません")
     sys.exit(1)
+
+def send_to_discord(webhook_url,message):
+    payload = {"content": message}
+    r = requests.post(webhook_url, json=payload)
+    r.raise_for_status()
 
 def send_to_slack(message):
     url = "https://slack.com/api/chat.postMessage"
@@ -87,7 +93,17 @@ def main():
     if not message:
         print("メッセージの作成に失敗しました。終了します。")
         return
+    # Discord送信
+    if DISCORD_WEBHOOK_URL:
+        try:
+            send_to_discord(DISCORD_WEBHOOK_URL,message)
+            print("Discordに送信しました。")
+        except Exception as e:
+            print("Discord送信でエラー", e)
+    else:
+        print("DISCORD_WEBHOOL_URLが設定されていません。")
     
+    # Slack送信
     ok = send_to_slack(message)
     if ok:
         print("Slackに送信しました。")
@@ -95,4 +111,3 @@ def main():
         print("Slack送信失敗。ログを確認してください。")
 if __name__ == "__main__":
     main()
-
